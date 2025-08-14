@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asisten Jurnalisme AI (Formulir Dinamis)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        textarea::placeholder, input::placeholder { color: #9ca3af; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .spinner { border: 4px solid rgba(255, 255, 255, 0.3); border-top-color: #fff; border-radius: 50%; width: 1.5rem; height: 1.5rem; animation: spin 1s linear infinite; }
+        .output-textarea { min-height: 200px; white-space: pre-wrap; }
+        .drop-zone-active { border-color: #3b82f6; background-color: #eff6ff; }
+        .dark .drop-zone-active { border-color: #60a5fa; background-color: #1e293b; }
+        .dynamic-field-container { transition: opacity 0.5s ease-in-out, max-height 0.5s ease-in-out; overflow: hidden; }
+        .dynamic-field-container.hidden { max-height: 0; opacity: 0; }
+        .dynamic-field-container:not(.hidden) { max-height: 1000px; opacity: 1; }
+    </style>
+</head>
+<body class="bg-gray-100 dark:bg-gray-900 text-gray-800 dark:text-gray-200 transition-colors duration-300">
+
+    <div class="container mx-auto p-4 sm:p-6 lg:p-8">
+        <div class="max-w-3xl mx-auto bg-white dark:bg-gray-800 rounded-2xl shadow-xl overflow-hidden">
+            <div class="p-6 sm:p-8">
+                <div class="text-center mb-8">
+                    <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">Asisten Jurnalisme AI</h1>
+                    <p class="text-gray-500 dark:text-gray-400 mt-2">Alat bantu cerdas untuk menyusun laporan jurnalistik yang terstruktur dan berkualitas.</p>
+                </div>
+
+                <form id="reportForm" class="space-y-6">
+                    <!-- 1. Data Dasar -->
+                    <div class="space-y-6 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                        <h3 class="font-semibold text-lg text-gray-800 dark:text-gray-200">Langkah 1: Informasi Dasar</h3>
+                        <div>
+                            <label for="reportTitle" class="block text-sm font-medium">Judul Laporan</label>
+                            <input type="text" id="reportTitle" required class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: Banjir Melanda Desa Sukamaju">
+                        </div>
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div><label for="contributorName" class="block text-sm font-medium">Nama Kontributor/Pengolah</label><input type="text" id="contributorName" required class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Nama Anda"></div>
+                            <div><label for="sourceName" class="block text-sm font-medium">Narasumber</label><input type="text" id="sourceName" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: Bpk. Budi, warga"></div>
+                            <div><label for="location" class="block text-sm font-medium">Lokasi Kejadian</label><input type="text" id="location" required class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: Desa Sukamaju"></div>
+                            <div><label for="eventTime" class="block text-sm font-medium">Waktu Kejadian</label><input type="text" id="eventTime" required class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: Selasa, 10 Agustus 2025, Pagi"></div>
+                        </div>
+                    </div>
+
+                    <!-- 2. Pilih Tema -->
+                    <div class="space-y-2 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                        <h3 class="font-semibold text-lg text-gray-800 dark:text-gray-200">Langkah 2: Pilih Jenis Berita</h3>
+                        <p class="text-sm text-gray-500 dark:text-gray-400">Memilih tema akan menampilkan kolom isian yang relevan di bawah.</p>
+                        <select id="reportTheme" class="w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg">
+                            <option value="Berita Kilat (Breaking News)">Berita Kilat (Breaking News)</option>
+                            <option value="Politik">Politik</option>
+                            <option value="Liputan Desa">Liputan Desa</option>
+                            <option value="Kuliner / UMKM">Kuliner / UMKM</option>
+                            <option value="Sosial & Budaya">Sosial & Budaya</option>
+                        </select>
+                    </div>
+
+                    <!-- 3. Kolom Dinamis -->
+                    <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                        <h3 class="font-semibold text-lg text-gray-800 dark:text-gray-200 mb-4">Langkah 3: Detail Spesifik Sesuai Jenis Berita</h3>
+                        <div id="dynamicFieldsContainer" class="space-y-6">
+                            <!-- Fields for Breaking News -->
+                            <div id="fields-breaking-news" class="dynamic-field-container space-y-4">
+                                <div><label class="block text-sm font-medium">Dampak Langsung Kejadian</label><input type="text" id="breaking-impact" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: Lalu lintas macet total, Listrik padam"></div>
+                                <div><label class="block text-sm font-medium">Jumlah Korban/Kerugian (jika ada)</label><input type="text" id="breaking-casualties" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: 2 orang luka ringan, kerugian Rp 50 juta"></div>
+                                <div><label class="block text-sm font-medium">Tindakan Pihak Berwenang</label><textarea id="breaking-action" rows="3" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: Tim SAR sudah di lokasi, polisi melakukan olah TKP"></textarea></div>
+                            </div>
+                            <!-- Fields for Politics -->
+                            <div id="fields-politics" class="dynamic-field-container hidden space-y-4">
+                                <div><label class="block text-sm font-medium">Aktor Politik Terkait</label><input type="text" id="politics-actors" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: Partai A, Politisi B, Kementrian C"></div>
+                                <div><label class="block text-sm font-medium">Kebijakan/Peraturan Terkait</label><input type="text" id="politics-policy" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: Rancangan UU Cipta Kerja"></div>
+                                <div><label class="block text-sm font-medium">Kutipan Penting Narasumber</label><textarea id="politics-quote" rows="3" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Salin tempel kutipan paling penting dari narasumber di sini..."></textarea></div>
+                            </div>
+                            <!-- Fields for Liputan Desa -->
+                            <div id="fields-desa" class="dynamic-field-container hidden space-y-4">
+                                <div><label class="block text-sm font-medium">Tokoh Utama dalam Cerita</label><input type="text" id="desa-figure" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: Ibu Siti, pengrajin tenun berusia 60 tahun"></div>
+                                <div><label class="block text-sm font-medium">Masalah atau Potensi Utama Desa</label><input type="text" id="desa-potential" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: Kesulitan pemasaran produk tenun"></div>
+                                <div><label class="block text-sm font-medium">Harapan Narasumber</label><textarea id="desa-hope" rows="3" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Apa harapan atau keinginan dari tokoh utama cerita?"></textarea></div>
+                            </div>
+                            <!-- Fields for Kuliner -->
+                            <div id="fields-kuliner" class="dynamic-field-container hidden space-y-4">
+                                <div><label class="block text-sm font-medium">Menu/Produk Andalan</label><input type="text" id="kuliner-menu" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: Sate Klathak, Gudeg Mercon"></div>
+                                <div><label class="block text-sm font-medium">Kisaran Harga</label><input type="text" id="kuliner-price" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: Rp 15.000 - Rp 50.000"></div>
+                                <div><label class="block text-sm font-medium">Keunikan / Nilai Jual Utama</label><textarea id="kuliner-unique" rows="3" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: Menggunakan resep rahasia keluarga sejak 1980"></textarea></div>
+                            </div>
+                            <!-- Fields for Budaya -->
+                            <div id="fields-budaya" class="dynamic-field-container hidden space-y-4">
+                                <div><label class="block text-sm font-medium">Nama Tradisi/Kegiatan</label><input type="text" id="budaya-name" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: Upacara Adat Sedekah Bumi"></div>
+                                <div><label class="block text-sm font-medium">Makna & Filosofi Singkat</label><textarea id="budaya-meaning" rows="3" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Jelaskan secara singkat makna di balik kegiatan ini"></textarea></div>
+                                <div><label class="block text-sm font-medium">Urutan Prosesi/Acara</label><textarea id="budaya-sequence" rows="3" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Jelaskan urutan acara dari awal hingga akhir"></textarea></div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- 4. Kronologi dan Unggah File -->
+                    <div class="space-y-6 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
+                        <h3 class="font-semibold text-lg text-gray-800 dark:text-gray-200">Langkah 4: Kronologi & Media Pendukung</h3>
+                        <div>
+                            <label for="reportContent" class="block text-sm font-medium">Kronologi / Detail Kejadian</label>
+                            <textarea id="reportContent" rows="6" required class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Jelaskan urutan kejadian atau detail lain yang belum tercakup di atas..."></textarea>
+                        </div>
+                        <div>
+                            <label class="block text-sm font-medium">Unggah Foto atau Video (Opsional)</label>
+                            <div id="dropZone" class="mt-1 flex justify-center px-6 pt-5 pb-6 border-2 border-dashed rounded-md">
+                                <div id="uploadPlaceholder" class="space-y-1 text-center">
+                                    <svg class="mx-auto h-12 w-12 text-gray-400" stroke="currentColor" fill="none" viewBox="0 0 48 48" aria-hidden="true"><path d="M28 8H12a4 4 0 00-4 4v20m32-12v8m0 0v8a4 4 0 01-4 4H12a4 4 0 01-4-4v-4m32-4l-3.172-3.172a4 4 0 00-5.656 0L28 28M8 32l9.172-9.172a4 4 0 015.656 0L28 28m0 0l4 4m4-24h8m-4-4v8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" /></svg>
+                                    <div class="flex text-sm text-gray-600 dark:text-gray-400"><label for="file-upload" class="relative cursor-pointer bg-white dark:bg-gray-800 rounded-md font-medium text-blue-600 dark:text-blue-400 hover:text-blue-500"><span>Pilih file</span><input id="file-upload" type="file" class="sr-only" accept="image/*,video/mp4,video/mov,video/quicktime"></label><p class="pl-1">atau seret dan lepas</p></div>
+                                    <p class="text-xs text-gray-500">Foto (JPG, PNG) atau Video (MP4, MOV)</p>
+                                </div>
+                                <div id="previewContainer" class="text-center hidden">
+                                    <img id="imagePreview" src="" alt="Pratinjau Gambar" class="max-h-48 mx-auto rounded-lg shadow-md hidden">
+                                    <div id="videoPreviewIcon" class="hidden mx-auto text-gray-400"><svg class="h-24 w-24" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z" clip-rule="evenodd" /></svg></div>
+                                    <p id="fileName" class="text-sm mt-2 font-medium"></p>
+                                    <button type="button" id="removeFileButton" class="mt-2 text-sm text-red-600 font-semibold">Hapus File</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="pt-4">
+                        <button type="submit" id="submitButton" class="w-full bg-gradient-to-r from-blue-500 to-purple-600 text-white font-bold py-3 px-4 rounded-lg shadow-lg flex items-center justify-center">
+                            <span id="buttonText">Olah Laporan dengan AI</span>
+                            <div id="loadingSpinner" class="spinner hidden"></div>
+                        </button>
+                    </div>
+                </form>
+                
+                <div id="resultsSection" class="hidden mt-10">
+                    <h2 class="text-2xl font-bold text-center text-gray-900 dark:text-white mb-6">Hasil Generasi AI</h2>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg flex flex-col">
+                            <div class="flex justify-between items-center mb-3">
+                                <h3 class="font-bold text-lg text-gray-800 dark:text-gray-200">Versi Artikel</h3>
+                                <button onclick="copyToClipboard('articleOutput', this)" class="bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 font-semibold py-1 px-3 rounded-md text-sm flex items-center gap-2">
+                                    <i class="far fa-copy"></i> <span class="copy-text">Salin</span>
+                                </button>
+                            </div>
+                            <textarea id="articleOutput" readonly class="output-textarea w-full p-2 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 rounded-md flex-grow"></textarea>
+                        </div>
+                        <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg flex flex-col">
+                             <div class="flex justify-between items-center mb-3">
+                                <h3 class="font-bold text-lg text-gray-800 dark:text-gray-200">Versi Medsos</h3>
+                                <button onclick="copyToClipboard('postOutput', this)" class="bg-gray-200 dark:bg-gray-600 hover:bg-gray-300 dark:hover:bg-gray-500 font-semibold py-1 px-3 rounded-md text-sm flex items-center gap-2">
+                                    <i class="far fa-copy"></i> <span class="copy-text">Salin</span>
+                                </button>
+                            </div>
+                            <textarea id="postOutput" readonly class="output-textarea w-full p-2 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 rounded-md flex-grow"></textarea>
+                        </div>
+                    </div>
+                    <div id="sendToWaContainer" class="hidden text-center mt-6">
+                        <button id="sendToWaButton" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg shadow-lg flex items-center justify-center gap-2 transform hover:scale-105 transition mx-auto">
+                            <i class="fab fa-whatsapp"></i><span>Kirim Hasil ke WA</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="errorMessage" class="hidden mt-6 p-4 bg-red-100 text-red-800 rounded-lg"><p></p></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // === Elemen DOM ===
+        const reportForm = document.getElementById('reportForm');
+        const reportTheme = document.getElementById('reportTheme');
+        const dynamicFieldsContainer = document.getElementById('dynamicFieldsContainer');
+        const submitButton = document.getElementById('submitButton');
+        const buttonText = document.getElementById('buttonText');
+        const loadingSpinner = document.getElementById('loadingSpinner');
+        const resultsSection = document.getElementById('resultsSection');
+        const articleOutput = document.getElementById('articleOutput');
+        const postOutput = document.getElementById('postOutput');
+        const errorMessage = document.getElementById('errorMessage');
+        const sendToWaContainer = document.getElementById('sendToWaContainer');
+        const sendToWaButton = document.getElementById('sendToWaButton');
+        const dropZone = document.getElementById('dropZone');
+        const fileUploadInput = document.getElementById('file-upload');
+        const uploadPlaceholder = document.getElementById('uploadPlaceholder');
+        const previewContainer = document.getElementById('previewContainer');
+        const imagePreview = document.getElementById('imagePreview');
+        const videoPreviewIcon = document.getElementById('videoPreviewIcon');
+        const fileNameDisplay = document.getElementById('fileName');
+        const removeFileButton = document.getElementById('removeFileButton');
+
+        let uploadedFile = null;
+        const yourWhatsAppNumber = 'GANTI_DENGAN_NOMOR_ANDA';
+        
+        // === BAGIAN YANG DIUBAH ===
+        // Kunci API dihapus dari sini untuk keamanan.
+        // URL sekarang menunjuk ke fungsi backend di Vercel.
+        const apiUrl = '/api/generate'; 
+        // =========================
+
+        function updateDynamicFields() {
+            const selectedTheme = reportTheme.value;
+            const allDynamicFields = dynamicFieldsContainer.querySelectorAll('.dynamic-field-container');
+            allDynamicFields.forEach(field => field.classList.add('hidden'));
+
+            let fieldsToShowId = '';
+            switch (selectedTheme) {
+                case 'Berita Kilat (Breaking News)': fieldsToShowId = 'fields-breaking-news'; break;
+                case 'Politik': fieldsToShowId = 'fields-politics'; break;
+                case 'Liputan Desa': fieldsToShowId = 'fields-desa'; break;
+                case 'Kuliner / UMKM': fieldsToShowId = 'fields-kuliner'; break;
+                case 'Sosial & Budaya': fieldsToShowId = 'fields-budaya'; break;
+            }
+
+            if (fieldsToShowId) {
+                document.getElementById(fieldsToShowId).classList.remove('hidden');
+            }
+        }
+
+        function buildPrompt(details) {
+            const { theme, baseData, dynamicData, mediaInfo } = details;
+            
+            let mediaInstruction = "";
+            if (mediaInfo) {
+                mediaInstruction = mediaInfo.isImage 
+                    ? "PENTING: Laporan ini disertai GAMBAR. Gunakan deskripsi visual dari gambar tersebut untuk memperkaya narasi."
+                    : `CATATAN: Laporan ini disertai video bernama "${mediaInfo.name}". Sebutkan keberadaan video ini jika relevan.`;
+            }
+            
+            const fullContext = { ...baseData, ...dynamicData };
+            let contextString = "DATA MENTAH:\n";
+            for (const [key, value] of Object.entries(fullContext)) {
+                if (value) {
+                    contextString += `- ${key}: ${value}\n`;
+                }
+            }
+
+            let persona = "", task = "", articleInstructions = "", socialMediaInstructions = "";
+
+            switch (theme) {
+                case 'Politik':
+                    persona = "Anda adalah seorang analis politik senior untuk media sekelas The Conversation.";
+                    task = "Ubah data berikut menjadi analisis politik yang tajam, berimbang, dan mendalam.";
+                    articleInstructions = "Versi ARTIKEL (Minimum 800 Kata): Jelaskan **mengapa ini penting?** Hubungkan dengan tren politik, peraturan, dan dinamika kekuasaan. Gunakan kutipan dari narasumber atau kutipan imajiner dari 'Pengamat Kebijakan Publik'. Sebutkan referensi sejarah jika relevan.";
+                    socialMediaInstructions = "Versi POSTINGAN MEDIA SOSIAL (Thread Twitter 3-Tweet): 1/3: Rangkuman fakta. 2/3: Analisis singkat 'Mengapa ini krusial?'. 3/3: Pertanyaan terbuka dan 3 hashtag netral.";
+                    break;
+                case 'Liputan Desa':
+                    persona = "Anda adalah seorang jurnalis feature untuk National Geographic Indonesia atau Kompas.id, ahli dalam mengangkat kisah humanis dari pelosok negeri.";
+                    task = "Sulap data berikut menjadi sebuah tulisan feature yang hangat, menyentuh, dan inspiratif.";
+                    articleInstructions = "Versi ARTIKEL (Minimum 800 Kata): Tulis dalam bentuk cerita. Awali dengan deskripsi suasana atau potret seorang tokoh. Gunakan gaya jurnalistik sastrawi.";
+                    socialMediaInstructions = "Versi POSTINGAN MEDIA SOSIAL (Instagram/Facebook): Fokus pada satu foto (jika ada) dan ceritakan kisah di baliknya. Akhiri dengan pertanyaan yang menggugah empati.";
+                    break;
+                case 'Kuliner / UMKM':
+                     persona = "Anda adalah seorang food blogger populer dan antusias seperti 'Nex Carlos' atau 'JWestBros'. Ulasan Anda jujur, detail, dan membuat orang penasaran.";
+                     task = "Buat ulasan kuliner/UMKM yang menggugah selera dari data berikut.";
+                     articleInstructions = "Versi ARTIKEL (Minimum 800 Kata): Gunakan bahasa yang hidup untuk mendeskripsikan rasa, tekstur, dan aroma. Ceritakan sedikit tentang penjualnya. Masukkan informasi praktis seperti lokasi dan harga.";
+                     socialMediaInstructions = "Versi POSTINGAN MEDIA SOSIAL (Ide Konten Instagram Reels/TikTok): Tulis skrip singkat untuk video. Contoh: 'Scene 1: Tunjukkan plang warungnya. Narasi: 'Hidden gem di [Lokasi]!'. Scene 2: Close up saat makanan disajikan.' Sertakan 3 hashtag kuliner yang tren.";
+                     break;
+                case 'Sosial & Budaya':
+                    persona = "Anda adalah seorang antropolog atau budayawan yang menulis untuk rubrik budaya di media seperti Tirto.id.";
+                    task = "Buat tulisan feature budaya yang edukatif dan reflektif dari data berikut.";
+                    articleInstructions = "Versi ARTIKEL (Minimum 800 Kata): Jelaskan 'mengapa' tradisi ini dilakukan, nilai, dan filosofinya. Berikan konteks sejarah. Gunakan bahasa yang menghargai.";
+                    socialMediaInstructions = "Versi POSTINGAN MEDIA SOSIAL (Ide Instagram Carousel 4 Slide): 1: Foto utama. 2: Nama & lokasi tradisi. 3: Makna singkat. 4: Ajak audiens berinteraksi. Sertakan 4 hashtag budaya.";
+                    break;
+                default: // Berita Kilat
+                    persona = "Anda adalah editor berita kilat di portal berita online terkemuka.";
+                    task = "Segera olah data berikut menjadi berita singkat sesuai standar 5W+1H.";
+                    articleInstructions = "Versi ARTIKEL (800 Kata): Gunakan prinsip piramida terbalik. Pastikan semua unsur 5W+1H terjawab.";
+                    socialMediaInstructions = "Versi POSTINGAN MEDIA SOSIAL (Instagram/Twitter): Awali dengan 'BREAKING NEWS:'. Sajikan 2-3 poin utama dalam bentuk bullet points dan 3 hashtag relevan.";
+                    break;
+            }
+
+            return `
+                **Persona:** ${persona}
+                **Tugas:** ${task}
+                ${contextString}
+                **Instruksi Media:** ${mediaInstruction}
+
+                **INSTRUKSI OUTPUT:**
+                1. ${articleInstructions}
+                2. ${socialMediaInstructions}
+
+                Pisahkan kedua versi HANYA dengan "---PEMISAH---".
+            `.trim();
+        }
+
+        reportForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            
+            buttonText.textContent = 'Menganalisis...';
+            loadingSpinner.classList.remove('hidden');
+            submitButton.disabled = true;
+            resultsSection.classList.add('hidden');
+            errorMessage.classList.add('hidden');
+
+            const baseData = {
+                Judul: document.getElementById('reportTitle').value,
+                Kontributor: document.getElementById('contributorName').value,
+                Narasumber: document.getElementById('sourceName').value,
+                Lokasi: document.getElementById('location').value,
+                Waktu: document.getElementById('eventTime').value,
+                Kronologi: document.getElementById('reportContent').value,
+            };
+
+            const selectedTheme = reportTheme.value;
+            let dynamicData = {};
+            switch (selectedTheme) {
+                case 'Berita Kilat (Breaking News)':
+                    dynamicData['Dampak Langsung'] = document.getElementById('breaking-impact').value;
+                    dynamicData['Korban/Kerugian'] = document.getElementById('breaking-casualties').value;
+                    dynamicData['Tindakan Aparat'] = document.getElementById('breaking-action').value;
+                    break;
+                case 'Politik':
+                    dynamicData['Aktor Terkait'] = document.getElementById('politics-actors').value;
+                    dynamicData['Kebijakan Terkait'] = document.getElementById('politics-policy').value;
+                    dynamicData['Kutipan Kunci'] = document.getElementById('politics-quote').value;
+                    break;
+                case 'Liputan Desa':
+                    dynamicData['Tokoh Utama'] = document.getElementById('desa-figure').value;
+                    dynamicData['Potensi/Masalah Desa'] = document.getElementById('desa-potential').value;
+                    dynamicData['Harapan Narasumber'] = document.getElementById('desa-hope').value;
+                    break;
+                case 'Kuliner / UMKM':
+                    dynamicData['Menu Andalan'] = document.getElementById('kuliner-menu').value;
+                    dynamicData['Kisaran Harga'] = document.getElementById('kuliner-price').value;
+                    dynamicData['Keunikan'] = document.getElementById('kuliner-unique').value;
+                    break;
+                case 'Sosial & Budaya':
+                    dynamicData['Nama Tradisi'] = document.getElementById('budaya-name').value;
+                    dynamicData['Makna Tradisi'] = document.getElementById('budaya-meaning').value;
+                    dynamicData['Urutan Acara'] = document.getElementById('budaya-sequence').value;
+                    break;
+            }
+
+            const promptDetails = {
+                theme: selectedTheme,
+                baseData: baseData,
+                dynamicData: dynamicData,
+                mediaInfo: uploadedFile ? { name: uploadedFile.name, isImage: uploadedFile.isImage } : null
+            };
+            
+            const prompt = buildPrompt(promptDetails);
+            const parts = [{ text: prompt }];
+            if (uploadedFile && uploadedFile.isImage) {
+                parts.push({ inlineData: { mimeType: uploadedFile.type, data: uploadedFile.base64 } });
+            }
+
+            // === BAGIAN YANG DIUBAH ===
+            // Payload sekarang hanya berisi 'parts' untuk dikirim ke backend.
+            const payload = {
+                parts: parts
+            };
+            // =========================
+            
+            try {
+                // === BAGIAN YANG DIUBAH ===
+                // Fetch sekarang mengirim data ke backend kita di '/api/generate'
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                // =========================
+
+                if (!response.ok) throw new Error(`Server error! status: ${response.status}`);
+
+                const result = await response.json();
+                
+                if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
+                    const fullText = result.candidates[0].content.parts[0].text;
+                    const contentParts = fullText.split('---PEMISAH---');
+                    articleOutput.value = contentParts[0]?.trim() || "Gagal menghasilkan artikel.";
+                    postOutput.value = contentParts[1]?.trim() || "Gagal menghasilkan postingan media sosial.";
+                    resultsSection.classList.remove('hidden');
+                    sendToWaContainer.classList.remove('hidden'); // Tampilkan hasil
+                } else {
+                    let msg = "Respon dari AI tidak valid.";
+                    if (result.promptFeedback?.blockReason) msg = `Konten diblokir: ${result.promptFeedback.blockReason}`;
+                    else if (result.error) msg = `Error dari backend: ${result.error}`;
+                    throw new Error(msg);
+                }
+
+            } catch (error) {
+                console.error('Error:', error);
+                errorMessage.querySelector('p').textContent = error.message;
+                errorMessage.classList.remove('hidden');
+            } finally {
+                buttonText.textContent = 'Olah Laporan dengan AI';
+                loadingSpinner.classList.add('hidden');
+                submitButton.disabled = false;
+            }
+        });
+
+        reportTheme.addEventListener('change', updateDynamicFields);
+        document.addEventListener('DOMContentLoaded', updateDynamicFields);
+        
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = () => resolve(reader.result.split(',')[1]);
+                reader.onerror = error => reject(error);
+            });
+        }
+        async function handleFileSelect(file) {
+            const isImage = file.type.startsWith('image/');
+            const isVideo = file.type.startsWith('video/');
+            if (!isImage && !isVideo) {
+                alert('Harap pilih file gambar atau video.');
+                return;
+            }
+            try {
+                const base64String = isImage ? await fileToBase64(file) : null;
+                uploadedFile = { name: file.name, type: file.type, isImage: isImage, base64: base64String };
+                if (isImage) {
+                    imagePreview.src = `data:${file.type};base64,${base64String}`;
+                    imagePreview.classList.remove('hidden');
+                    videoPreviewIcon.classList.add('hidden');
+                } else {
+                    imagePreview.classList.add('hidden');
+                    videoPreviewIcon.classList.remove('hidden');
+                }
+                fileNameDisplay.textContent = file.name;
+                uploadPlaceholder.classList.add('hidden');
+                previewContainer.classList.remove('hidden');
+            } catch (error) {
+                console.error('Gagal memproses file:', error);
+            }
+        }
+        function resetFileInput() {
+            uploadedFile = null;
+            fileUploadInput.value = '';
+            uploadPlaceholder.classList.remove('hidden');
+            previewContainer.classList.add('hidden');
+        }
+        ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, e => { e.preventDefault(); e.stopPropagation(); });
+        });
+        ['dragenter', 'dragover'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.add('drop-zone-active'));
+        });
+        ['dragleave', 'drop'].forEach(eventName => {
+            dropZone.addEventListener(eventName, () => dropZone.classList.remove('drop-zone-active'));
+        });
+        dropZone.addEventListener('drop', e => {
+            if (e.dataTransfer.files?.[0]) handleFileSelect(e.dataTransfer.files[0]);
+        });
+        fileUploadInput.addEventListener('change', e => {
+            if (e.target.files?.[0]) handleFileSelect(e.target.files[0]);
+        });
+        removeFileButton.addEventListener('click', resetFileInput);
+        sendToWaButton.addEventListener('click', function() {
+            const articleText = articleOutput.value;
+            const postText = postOutput.value;
+            const originalTitle = document.getElementById('reportTitle').value;
+            const contributor = document.getElementById('contributorName').value;
+            let whatsappMessage = `*--- DRAF UNTUK DIKURASI OLEH ${contributor.toUpperCase()} ---*\n\n` +
+                                `*Judul Asli:* ${originalTitle}\n\n` +
+                                `*======================*\n*DRAF ARTIKEL*\n*======================*\n\n${articleText}\n\n` +
+                                `*======================*\n*DRAF POSTINGAN MEDSOS*\n*======================*\n\n${postText}`;
+            const encodedMessage = encodeURIComponent(whatsappMessage);
+            const whatsappUrl = `https://wa.me/${yourWhatsAppNumber}?text=${encodedMessage}`;
+            window.open(whatsappUrl, '_blank');
+        });
+        function copyToClipboard(elementId, buttonElement) {
+            const textarea = document.getElementById(elementId);
+            textarea.select();
+            document.execCommand('copy');
+            const copyText = buttonElement.querySelector('.copy-text');
+            copyText.textContent = 'Tersalin!';
+            setTimeout(() => { copyText.textContent = 'Salin'; }, 2000);
+        }
+
+    </script>
+</body>
+</html>
