@@ -33,7 +33,7 @@
                 </div>
 
                 <form id="reportForm" class="space-y-6">
-                    <!-- 1. Data Dasar -->
+                    <!-- Formulir (tidak berubah) -->
                     <div class="space-y-6 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
                         <h3 class="font-semibold text-lg text-gray-800 dark:text-gray-200">Langkah 1: Informasi Dasar</h3>
                         <div>
@@ -47,8 +47,6 @@
                             <div><label for="eventTime" class="block text-sm font-medium">Waktu Kejadian</label><input type="text" id="eventTime" required class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: Selasa, 10 Agustus 2025, Pagi"></div>
                         </div>
                     </div>
-
-                    <!-- 2. Pilih Tema -->
                     <div class="space-y-2 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
                         <h3 class="font-semibold text-lg text-gray-800 dark:text-gray-200">Langkah 2: Pilih Jenis Berita</h3>
                         <p class="text-sm text-gray-500 dark:text-gray-400">Memilih tema akan menampilkan kolom isian yang relevan di bawah.</p>
@@ -60,36 +58,29 @@
                             <option value="Sosial & Budaya">Sosial & Budaya</option>
                         </select>
                     </div>
-
-                    <!-- 3. Kolom Dinamis -->
                     <div class="p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
                         <h3 class="font-semibold text-lg text-gray-800 dark:text-gray-200 mb-4">Langkah 3: Detail Spesifik Sesuai Jenis Berita</h3>
                         <div id="dynamicFieldsContainer" class="space-y-6">
-                            <!-- Fields for Breaking News -->
                             <div id="fields-breaking-news" class="dynamic-field-container space-y-4">
                                 <div><label class="block text-sm font-medium">Dampak Langsung Kejadian</label><input type="text" id="breaking-impact" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: Lalu lintas macet total, Listrik padam"></div>
                                 <div><label class="block text-sm font-medium">Jumlah Korban/Kerugian (jika ada)</label><input type="text" id="breaking-casualties" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: 2 orang luka ringan, kerugian Rp 50 juta"></div>
                                 <div><label class="block text-sm font-medium">Tindakan Pihak Berwenang</label><textarea id="breaking-action" rows="3" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: Tim SAR sudah di lokasi, polisi melakukan olah TKP"></textarea></div>
                             </div>
-                            <!-- Fields for Politics -->
                             <div id="fields-politics" class="dynamic-field-container hidden space-y-4">
                                 <div><label class="block text-sm font-medium">Aktor Politik Terkait</label><input type="text" id="politics-actors" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: Partai A, Politisi B, Kementrian C"></div>
                                 <div><label class="block text-sm font-medium">Kebijakan/Peraturan Terkait</label><input type="text" id="politics-policy" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: Rancangan UU Cipta Kerja"></div>
                                 <div><label class="block text-sm font-medium">Kutipan Penting Narasumber</label><textarea id="politics-quote" rows="3" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Salin tempel kutipan paling penting dari narasumber di sini..."></textarea></div>
                             </div>
-                            <!-- Fields for Liputan Desa -->
                             <div id="fields-desa" class="dynamic-field-container hidden space-y-4">
                                 <div><label class="block text-sm font-medium">Tokoh Utama dalam Cerita</label><input type="text" id="desa-figure" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: Ibu Siti, pengrajin tenun berusia 60 tahun"></div>
                                 <div><label class="block text-sm font-medium">Masalah atau Potensi Utama Desa</label><input type="text" id="desa-potential" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: Kesulitan pemasaran produk tenun"></div>
                                 <div><label class="block text-sm font-medium">Harapan Narasumber</label><textarea id="desa-hope" rows="3" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Apa harapan atau keinginan dari tokoh utama cerita?"></textarea></div>
                             </div>
-                            <!-- Fields for Kuliner -->
                             <div id="fields-kuliner" class="dynamic-field-container hidden space-y-4">
                                 <div><label class="block text-sm font-medium">Menu/Produk Andalan</label><input type="text" id="kuliner-menu" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: Sate Klathak, Gudeg Mercon"></div>
                                 <div><label class="block text-sm font-medium">Kisaran Harga</label><input type="text" id="kuliner-price" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: Rp 15.000 - Rp 50.000"></div>
                                 <div><label class="block text-sm font-medium">Keunikan / Nilai Jual Utama</label><textarea id="kuliner-unique" rows="3" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: Menggunakan resep rahsia keluarga sejak 1980"></textarea></div>
                             </div>
-                            <!-- Fields for Budaya -->
                             <div id="fields-budaya" class="dynamic-field-container hidden space-y-4">
                                 <div><label class="block text-sm font-medium">Nama Tradisi/Kegiatan</label><input type="text" id="budaya-name" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: Upacara Adat Sedekah Bumi"></div>
                                 <div><label class="block text-sm font-medium">Makna & Filosofi Singkat</label><textarea id="budaya-meaning" rows="3" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Jelaskan secara singkat makna di balik kegiatan ini"></textarea></div>
@@ -97,8 +88,6 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- 4. Kronologi dan Unggah File -->
                     <div class="space-y-6 p-4 border border-gray-200 dark:border-gray-700 rounded-lg">
                         <h3 class="font-semibold text-lg text-gray-800 dark:text-gray-200">Langkah 4: Kronologi & Media Pendukung</h3>
                         <div>
@@ -153,6 +142,15 @@
                             <textarea id="postOutput" readonly class="output-textarea w-full p-2 bg-white dark:bg-gray-800 border-gray-200 dark:border-gray-600 rounded-md flex-grow"></textarea>
                         </div>
                     </div>
+                    
+                    <!-- === TOMBOL BARU UNTUK LANGKAH KEDUA === -->
+                    <div id="socialStepContainer" class="hidden text-center mt-6">
+                         <button id="generateSocialButton" class="bg-cyan-500 hover:bg-cyan-600 text-white font-bold py-2 px-6 rounded-lg shadow-lg flex items-center justify-center gap-2 transform hover:scale-105 transition mx-auto">
+                            <i class="fas fa-share-alt"></i>
+                            <span>Buat Postingan Medsos dari Artikel</span>
+                         </button>
+                    </div>
+
                     <div id="sendToWaContainer" class="hidden text-center mt-6">
                         <button id="sendToWaButton" class="bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-6 rounded-lg shadow-lg flex items-center justify-center gap-2 transform hover:scale-105 transition mx-auto">
                             <i class="fab fa-whatsapp"></i><span>Kirim Hasil ke WA</span>
@@ -177,6 +175,8 @@
         const articleOutput = document.getElementById('articleOutput');
         const postOutput = document.getElementById('postOutput');
         const errorMessage = document.getElementById('errorMessage');
+        const socialStepContainer = document.getElementById('socialStepContainer');
+        const generateSocialButton = document.getElementById('generateSocialButton');
         const sendToWaContainer = document.getElementById('sendToWaContainer');
         const sendToWaButton = document.getElementById('sendToWaButton');
         const dropZone = document.getElementById('dropZone');
@@ -189,7 +189,7 @@
         const removeFileButton = document.getElementById('removeFileButton');
 
         let uploadedFile = null;
-        const yourWhatsAppNumber = 'GANTI_DENGAN_NOMOR_ANDA';
+        const yourWhatsAppNumber = '628997166707';
         
         const apiUrl = '/api/generate'; 
 
@@ -212,84 +212,30 @@
             }
         }
 
-        function buildPrompt(details) {
-            const { theme, baseData, dynamicData, mediaInfo } = details;
-            
-            let mediaInstruction = "";
-            if (mediaInfo) {
-                mediaInstruction = mediaInfo.isImage 
-                    ? "PENTING: Laporan ini disertai GAMBAR. Gunakan deskripsi visual dari gambar tersebut untuk memperkaya narasi."
-                    : `CATATAN: Laporan ini disertai video bernama "${mediaInfo.name}". Sebutkan keberadaan video ini jika relevan.`;
+        async function streamToTextarea(response, textarea) {
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder();
+            textarea.value = '';
+
+            while (true) {
+                const { value, done } = await reader.read();
+                if (done) break;
+                const chunk = decoder.decode(value, { stream: true });
+                textarea.value += chunk;
+                textarea.scrollTop = textarea.scrollHeight; // Auto-scroll
             }
-            
-            const fullContext = { ...baseData, ...dynamicData };
-            let contextString = "DATA MENTAH:\n";
-            for (const [key, value] of Object.entries(fullContext)) {
-                if (value) {
-                    contextString += `- ${key}: ${value}\n`;
-                }
-            }
-
-            let persona = "", task = "", articleInstructions = "", socialMediaInstructions = "";
-            
-            const articleLength = "antara 500 hingga 800 kata";
-
-            switch (theme) {
-                case 'Politik':
-                    persona = "Anda adalah seorang analis politik senior untuk media sekelas The Conversation.";
-                    task = "Ubah data berikut menjadi analisis politik yang tajam, berimbang, dan mendalam.";
-                    articleInstructions = `Versi ARTIKEL (panjang ${articleLength}): Jelaskan **mengapa ini penting?** Hubungkan dengan tren politik, peraturan, dan dinamika kekuasaan. Gunakan kutipan dari narasumber atau kutipan imajiner dari 'Pengamat Kebijakan Publik'. Sebutkan referensi sejarah jika relevan.`;
-                    socialMediaInstructions = "Versi POSTINGAN MEDIA SOSIAL (Thread Twitter 3-Tweet): 1/3: Rangkuman fakta. 2/3: Analisis singkat 'Mengapa ini krusial?'. 3/3: Pertanyaan terbuka dan 3 hashtag netral.";
-                    break;
-                case 'Liputan Desa':
-                    persona = "Anda adalah seorang jurnalis feature untuk National Geographic Indonesia atau Kompas.id, ahli dalam mengangkat kisah humanis dari pelosok negeri.";
-                    task = "Sulap data berikut menjadi sebuah tulisan feature yang hangat, menyentuh, dan inspiratif.";
-                    articleInstructions = `Versi ARTIKEL (panjang ${articleLength}): Tulis dalam bentuk cerita. Awali dengan deskripsi suasana atau potret seorang tokoh. Gunakan gaya jurnalistik sastrawi.`;
-                    socialMediaInstructions = "Versi POSTINGAN MEDIA SOSIAL (Instagram/Facebook): Fokus pada satu foto (jika ada) dan ceritakan kisah di baliknya. Akhiri dengan pertanyaan yang menggugah empati.";
-                    break;
-                case 'Kuliner / UMKM':
-                     persona = "Anda adalah seorang food blogger populer dan antusias seperti 'Nex Carlos' atau 'JWestBros'. Ulasan Anda jujur, detail, dan membuat orang penasaran.";
-                     task = "Buat ulasan kuliner/UMKM yang menggugah selera dari data berikut.";
-                     articleInstructions = `Versi ARTIKEL (panjang ${articleLength}): Gunakan bahasa yang hidup untuk mendeskripsikan rasa, tekstur, dan aroma. Ceritakan sedikit tentang penjualnya. Masukkan informasi praktis seperti lokasi dan harga.`;
-                     socialMediaInstructions = "Versi POSTINGAN MEDIA SOSIAL (Ide Konten Instagram Reels/TikTok): Tulis skrip singkat untuk video. Contoh: 'Scene 1: Tunjukkan plang warungnya. Narasi: 'Hidden gem di [Lokasi]!'. Scene 2: Close up saat makanan disajikan.' Sertakan 3 hashtag kuliner yang tren.";
-                     break;
-                case 'Sosial & Budaya':
-                    persona = "Anda adalah seorang antropolog atau budayawan yang menulis untuk rubrik budaya di media seperti Tirto.id.";
-                    task = "Buat tulisan feature budaya yang edukatif dan reflektif dari data berikut.";
-                    articleInstructions = `Versi ARTIKEL (panjang ${articleLength}): Jelaskan 'mengapa' tradisi ini dilakukan, nilai, dan filosofinya. Berikan konteks sejarah. Gunakan bahasa yang menghargai.`;
-                    socialMediaInstructions = "Versi POSTINGAN MEDIA SOSIAL (Ide Instagram Carousel 4 Slide): 1: Foto utama. 2: Nama & lokasi tradisi. 3: Makna singkat. 4: Ajak audiens berinteraksi. Sertakan 4 hashtag budaya.";
-                    break;
-                default: // Berita Kilat
-                    persona = "Anda adalah editor berita kilat di portal berita online terkemuka.";
-                    task = "Segera olah data berikut menjadi berita singkat sesuai standar 5W+1H.";
-                    articleInstructions = `Versi ARTIKEL (panjang ${articleLength}): Gunakan prinsip piramida terbalik. Pastikan semua unsur 5W+1H terjawab.`;
-                    socialMediaInstructions = "Versi POSTINGAN MEDIA SOSIAL (Instagram/Twitter): Awali dengan 'BREAKING NEWS:'. Sajikan 2-3 poin utama dalam bentuk bullet points dan 3 hashtag relevan.";
-                    break;
-            }
-
-            return `
-                **Persona:** ${persona}
-                **Tugas:** ${task}
-                ${contextString}
-                **Instruksi Media:** ${mediaInstruction}
-
-                **INSTRUKSI OUTPUT FINAL:**
-                Anda HARUS menghasilkan DUA bagian: Artikel dan Postingan Media Sosial.
-                Gunakan "---PEMISAH---" TEPAT SATU KALI untuk memisahkan kedua bagian tersebut.
-                
-                1. ${articleInstructions}
-                2. ${socialMediaInstructions}
-            `.trim();
         }
 
         reportForm.addEventListener('submit', async function(event) {
             event.preventDefault();
             
-            buttonText.textContent = 'Menganalisis...';
+            buttonText.textContent = 'Membuat Artikel...';
             loadingSpinner.classList.remove('hidden');
             submitButton.disabled = true;
             resultsSection.classList.add('hidden');
             errorMessage.classList.add('hidden');
+            socialStepContainer.classList.add('hidden');
+            sendToWaContainer.classList.add('hidden');
             articleOutput.value = '';
             postOutput.value = '';
 
@@ -305,7 +251,7 @@
             const selectedTheme = reportTheme.value;
             let dynamicData = {};
             switch (selectedTheme) {
-                case 'Berita Kilat (Breaking News)':
+                 case 'Berita Kilat (Breaking News)':
                     dynamicData['Dampak Langsung'] = document.getElementById('breaking-impact').value;
                     dynamicData['Korban/Kerugian'] = document.getElementById('breaking-casualties').value;
                     dynamicData['Tindakan Aparat'] = document.getElementById('breaking-action').value;
@@ -332,22 +278,20 @@
                     break;
             }
 
-            const promptDetails = {
-                theme: selectedTheme,
-                baseData: baseData,
-                dynamicData: dynamicData,
-                mediaInfo: uploadedFile ? { name: uploadedFile.name, isImage: uploadedFile.isImage } : null
-            };
-            
-            const prompt = buildPrompt(promptDetails);
-            const parts = [{ text: prompt }];
+            const mediaInfo = uploadedFile ? { name: uploadedFile.name, isImage: uploadedFile.isImage } : null;
+            const parts = [];
             if (uploadedFile && uploadedFile.isImage) {
                 parts.push({ inlineData: { mimeType: uploadedFile.type, data: uploadedFile.base64 } });
             }
 
-            const payload = { parts: parts };
+            const payload = { 
+                type: 'article',
+                details: { theme: selectedTheme, baseData, dynamicData, mediaInfo },
+                parts: parts
+            };
             
             try {
+                resultsSection.classList.remove('hidden');
                 const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -359,32 +303,8 @@
                     throw new Error(`Server error! status: ${response.status}. Pesan: ${errText}`);
                 }
 
-                const reader = response.body.getReader();
-                const decoder = new TextDecoder();
-                let fullResponseText = '';
-                
-                resultsSection.classList.remove('hidden');
-                sendToWaContainer.classList.remove('hidden');
-
-                while (true) {
-                    const { value, done } = await reader.read();
-                    if (done) break;
-                    
-                    const chunk = decoder.decode(value, { stream: true });
-                    fullResponseText += chunk;
-                    
-                    // === PERBAIKAN LOGIKA STREAMING ===
-                    // Tampilkan teks yang mengalir secara real-time dan pisahkan saat pemisah ditemukan
-                    const separator = '---PEMISAH---';
-                    const separatorIndex = fullResponseText.indexOf(separator);
-
-                    if (separatorIndex !== -1) {
-                        articleOutput.value = fullResponseText.substring(0, separatorIndex).trim();
-                        postOutput.value = fullResponseText.substring(separatorIndex + separator.length).trim();
-                    } else {
-                        articleOutput.value = fullResponseText;
-                    }
-                }
+                await streamToTextarea(response, articleOutput);
+                socialStepContainer.classList.remove('hidden'); // Tampilkan tombol langkah kedua
 
             } catch (error) {
                 console.error('Error:', error);
@@ -394,6 +314,45 @@
                 buttonText.textContent = 'Olah Laporan dengan AI';
                 loadingSpinner.classList.add('hidden');
                 submitButton.disabled = false;
+            }
+        });
+
+        generateSocialButton.addEventListener('click', async function() {
+            this.textContent = 'Membuat Postingan...';
+            this.disabled = true;
+            errorMessage.classList.add('hidden');
+            postOutput.value = '';
+
+            const payload = {
+                type: 'social',
+                details: {
+                    theme: document.getElementById('reportTheme').value,
+                    article: articleOutput.value
+                }
+            };
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                
+                if (!response.ok) {
+                    const errText = await response.text();
+                    throw new Error(`Server error! status: ${response.status}. Pesan: ${errText}`);
+                }
+
+                await streamToTextarea(response, postOutput);
+                sendToWaContainer.classList.remove('hidden'); // Tampilkan tombol WA
+
+            } catch (error) {
+                console.error('Error:', error);
+                errorMessage.querySelector('p').textContent = error.message;
+                errorMessage.classList.remove('hidden');
+            } finally {
+                this.textContent = 'Buat Postingan Medsos dari Artikel';
+                this.disabled = false;
             }
         });
 
