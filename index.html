@@ -191,11 +191,7 @@
         let uploadedFile = null;
         const yourWhatsAppNumber = '628997166707';
         
-        // === BAGIAN YANG DIUBAH ===
-        // Kunci API dihapus dari sini untuk keamanan.
-        // URL sekarang menunjuk ke fungsi backend di Vercel.
         const apiUrl = '/api/generate'; 
-        // =========================
 
         function updateDynamicFields() {
             const selectedTheme = reportTheme.value;
@@ -235,36 +231,40 @@
             }
 
             let persona = "", task = "", articleInstructions = "", socialMediaInstructions = "";
+            
+            // === PERBAIKAN PROMPT ===
+            // Mengubah permintaan jumlah kata menjadi rentang yang lebih realistis untuk AI
+            const articleLength = "antara 500 hingga 800 kata";
 
             switch (theme) {
                 case 'Politik':
                     persona = "Anda adalah seorang analis politik senior untuk media sekelas The Conversation.";
                     task = "Ubah data berikut menjadi analisis politik yang tajam, berimbang, dan mendalam.";
-                    articleInstructions = "Versi ARTIKEL (Minimum 800 Kata): Jelaskan **mengapa ini penting?** Hubungkan dengan tren politik, peraturan, dan dinamika kekuasaan. Gunakan kutipan dari narasumber atau kutipan imajiner dari 'Pengamat Kebijakan Publik'. Sebutkan referensi sejarah jika relevan.";
+                    articleInstructions = `Versi ARTIKEL (panjang ${articleLength}): Jelaskan **mengapa ini penting?** Hubungkan dengan tren politik, peraturan, dan dinamika kekuasaan. Gunakan kutipan dari narasumber atau kutipan imajiner dari 'Pengamat Kebijakan Publik'. Sebutkan referensi sejarah jika relevan.`;
                     socialMediaInstructions = "Versi POSTINGAN MEDIA SOSIAL (Thread Twitter 3-Tweet): 1/3: Rangkuman fakta. 2/3: Analisis singkat 'Mengapa ini krusial?'. 3/3: Pertanyaan terbuka dan 3 hashtag netral.";
                     break;
                 case 'Liputan Desa':
                     persona = "Anda adalah seorang jurnalis feature untuk National Geographic Indonesia atau Kompas.id, ahli dalam mengangkat kisah humanis dari pelosok negeri.";
                     task = "Sulap data berikut menjadi sebuah tulisan feature yang hangat, menyentuh, dan inspiratif.";
-                    articleInstructions = "Versi ARTIKEL (Minimum 800 Kata): Tulis dalam bentuk cerita. Awali dengan deskripsi suasana atau potret seorang tokoh. Gunakan gaya jurnalistik sastrawi.";
+                    articleInstructions = `Versi ARTIKEL (panjang ${articleLength}): Tulis dalam bentuk cerita. Awali dengan deskripsi suasana atau potret seorang tokoh. Gunakan gaya jurnalistik sastrawi.`;
                     socialMediaInstructions = "Versi POSTINGAN MEDIA SOSIAL (Instagram/Facebook): Fokus pada satu foto (jika ada) dan ceritakan kisah di baliknya. Akhiri dengan pertanyaan yang menggugah empati.";
                     break;
                 case 'Kuliner / UMKM':
                      persona = "Anda adalah seorang food blogger populer dan antusias seperti 'Nex Carlos' atau 'JWestBros'. Ulasan Anda jujur, detail, dan membuat orang penasaran.";
                      task = "Buat ulasan kuliner/UMKM yang menggugah selera dari data berikut.";
-                     articleInstructions = "Versi ARTIKEL (Minimum 800 Kata): Gunakan bahasa yang hidup untuk mendeskripsikan rasa, tekstur, dan aroma. Ceritakan sedikit tentang penjualnya. Masukkan informasi praktis seperti lokasi dan harga.";
+                     articleInstructions = `Versi ARTIKEL (panjang ${articleLength}): Gunakan bahasa yang hidup untuk mendeskripsikan rasa, tekstur, dan aroma. Ceritakan sedikit tentang penjualnya. Masukkan informasi praktis seperti lokasi dan harga.`;
                      socialMediaInstructions = "Versi POSTINGAN MEDIA SOSIAL (Ide Konten Instagram Reels/TikTok): Tulis skrip singkat untuk video. Contoh: 'Scene 1: Tunjukkan plang warungnya. Narasi: 'Hidden gem di [Lokasi]!'. Scene 2: Close up saat makanan disajikan.' Sertakan 3 hashtag kuliner yang tren.";
                      break;
                 case 'Sosial & Budaya':
                     persona = "Anda adalah seorang antropolog atau budayawan yang menulis untuk rubrik budaya di media seperti Tirto.id.";
                     task = "Buat tulisan feature budaya yang edukatif dan reflektif dari data berikut.";
-                    articleInstructions = "Versi ARTIKEL (Minimum 800 Kata): Jelaskan 'mengapa' tradisi ini dilakukan, nilai, dan filosofinya. Berikan konteks sejarah. Gunakan bahasa yang menghargai.";
+                    articleInstructions = `Versi ARTIKEL (panjang ${articleLength}): Jelaskan 'mengapa' tradisi ini dilakukan, nilai, dan filosofinya. Berikan konteks sejarah. Gunakan bahasa yang menghargai.`;
                     socialMediaInstructions = "Versi POSTINGAN MEDIA SOSIAL (Ide Instagram Carousel 4 Slide): 1: Foto utama. 2: Nama & lokasi tradisi. 3: Makna singkat. 4: Ajak audiens berinteraksi. Sertakan 4 hashtag budaya.";
                     break;
                 default: // Berita Kilat
                     persona = "Anda adalah editor berita kilat di portal berita online terkemuka.";
                     task = "Segera olah data berikut menjadi berita singkat sesuai standar 5W+1H.";
-                    articleInstructions = "Versi ARTIKEL (800 Kata): Gunakan prinsip piramida terbalik. Pastikan semua unsur 5W+1H terjawab.";
+                    articleInstructions = `Versi ARTIKEL (panjang ${articleLength}): Gunakan prinsip piramida terbalik. Pastikan semua unsur 5W+1H terjawab.`;
                     socialMediaInstructions = "Versi POSTINGAN MEDIA SOSIAL (Instagram/Twitter): Awali dengan 'BREAKING NEWS:'. Sajikan 2-3 poin utama dalam bentuk bullet points dan 3 hashtag relevan.";
                     break;
             }
@@ -275,11 +275,12 @@
                 ${contextString}
                 **Instruksi Media:** ${mediaInstruction}
 
-                **INSTRUKSI OUTPUT:**
+                **INSTRUKSI OUTPUT FINAL:**
+                Anda HARUS menghasilkan DUA bagian: Artikel dan Postingan Media Sosial.
+                Gunakan "---PEMISAH---" TEPAT SATU KALI untuk memisahkan kedua bagian tersebut.
+                
                 1. ${articleInstructions}
                 2. ${socialMediaInstructions}
-
-                Pisahkan kedua versi HANYA dengan "---PEMISAH---".
             `.trim();
         }
 
@@ -344,22 +345,16 @@
                 parts.push({ inlineData: { mimeType: uploadedFile.type, data: uploadedFile.base64 } });
             }
 
-            // === BAGIAN YANG DIUBAH ===
-            // Payload sekarang hanya berisi 'parts' untuk dikirim ke backend.
             const payload = {
                 parts: parts
             };
-            // =========================
             
             try {
-                // === BAGIAN YANG DIUBAH ===
-                // Fetch sekarang mengirim data ke backend kita di '/api/generate'
                 const response = await fetch(apiUrl, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(payload)
                 });
-                // =========================
 
                 if (!response.ok) throw new Error(`Server error! status: ${response.status}`);
 
@@ -368,12 +363,20 @@
                 if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
                     const fullText = result.candidates[0].content.parts[0].text;
                     const contentParts = fullText.split('---PEMISAH---');
-                    articleOutput.value = contentParts[0]?.trim() || "Gagal menghasilkan artikel.";
-                    postOutput.value = contentParts[1]?.trim() || "Gagal menghasilkan postingan media sosial.";
+                    
+                    if (contentParts.length >= 2) {
+                        articleOutput.value = contentParts[0]?.trim() || "Gagal menghasilkan artikel.";
+                        postOutput.value = contentParts[1]?.trim() || "Gagal menghasilkan postingan media sosial.";
+                    } else {
+                        // Jika pemisah tidak ditemukan, tampilkan semua di artikel untuk di-debug
+                        articleOutput.value = fullText;
+                        postOutput.value = "Gagal memisahkan konten. Periksa output artikel.";
+                    }
+                    
                     resultsSection.classList.remove('hidden');
-                    sendToWaContainer.classList.remove('hidden'); // Tampilkan hasil
+                    sendToWaContainer.classList.remove('hidden');
                 } else {
-                    let msg = "Respon dari AI tidak valid.";
+                    let msg = "Respon dari AI tidak valid atau kosong.";
                     if (result.promptFeedback?.blockReason) msg = `Konten diblokir: ${result.promptFeedback.blockReason}`;
                     else if (result.error) msg = `Error dari backend: ${result.error}`;
                     throw new Error(msg);
@@ -473,5 +476,3 @@
     </script>
 </body>
 </html>
-
-
