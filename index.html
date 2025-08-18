@@ -189,7 +189,7 @@
         const removeFileButton = document.getElementById('removeFileButton');
 
         let uploadedFile = null;
-        const yourWhatsAppNumber = '628997166707';
+        const yourWhatsAppNumber = 'GANTI_DENGAN_NOMOR_ANDA';
         
         const apiUrl = '/api/generate'; 
 
@@ -290,7 +290,6 @@
             submitButton.disabled = true;
             resultsSection.classList.add('hidden');
             errorMessage.classList.add('hidden');
-            // Kosongkan hasil sebelumnya
             articleOutput.value = '';
             postOutput.value = '';
 
@@ -360,11 +359,9 @@
                     throw new Error(`Server error! status: ${response.status}. Pesan: ${errText}`);
                 }
 
-                // === LOGIKA BARU: Membaca Stream ===
                 const reader = response.body.getReader();
                 const decoder = new TextDecoder();
-                let buffer = '';
-                let isSeparated = false;
+                let fullResponseText = '';
                 
                 resultsSection.classList.remove('hidden');
                 sendToWaContainer.classList.remove('hidden');
@@ -373,22 +370,19 @@
                     const { value, done } = await reader.read();
                     if (done) break;
                     
-                    buffer += decoder.decode(value, { stream: true });
+                    const chunk = decoder.decode(value, { stream: true });
+                    fullResponseText += chunk;
+                    
+                    // === PERBAIKAN LOGIKA STREAMING ===
+                    // Tampilkan teks yang mengalir secara real-time dan pisahkan saat pemisah ditemukan
+                    const separator = '---PEMISAH---';
+                    const separatorIndex = fullResponseText.indexOf(separator);
 
-                    // Cek apakah pemisah sudah ada di buffer
-                    if (!isSeparated && buffer.includes('---PEMISAH---')) {
-                        const parts = buffer.split('---PEMISAH---');
-                        articleOutput.value = parts[0].trim();
-                        postOutput.value = parts[1].trim();
-                        isSeparated = true;
+                    if (separatorIndex !== -1) {
+                        articleOutput.value = fullResponseText.substring(0, separatorIndex).trim();
+                        postOutput.value = fullResponseText.substring(separatorIndex + separator.length).trim();
                     } else {
-                        // Jika sudah terpisah, tambahkan sisa buffer ke postOutput
-                        if (isSeparated) {
-                            postOutput.value += buffer.substring(buffer.lastIndexOf('---PEMISAH---') + '---PEMISAH---'.length);
-                        } else {
-                            // Jika belum, tambahkan semua ke articleOutput
-                            articleOutput.value = buffer;
-                        }
+                        articleOutput.value = fullResponseText;
                     }
                 }
 
