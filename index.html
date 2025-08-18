@@ -87,7 +87,7 @@
                             <div id="fields-kuliner" class="dynamic-field-container hidden space-y-4">
                                 <div><label class="block text-sm font-medium">Menu/Produk Andalan</label><input type="text" id="kuliner-menu" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: Sate Klathak, Gudeg Mercon"></div>
                                 <div><label class="block text-sm font-medium">Kisaran Harga</label><input type="text" id="kuliner-price" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: Rp 15.000 - Rp 50.000"></div>
-                                <div><label class="block text-sm font-medium">Keunikan / Nilai Jual Utama</label><textarea id="kuliner-unique" rows="3" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: Menggunakan resep rahasia keluarga sejak 1980"></textarea></div>
+                                <div><label class="block text-sm font-medium">Keunikan / Nilai Jual Utama</label><textarea id="kuliner-unique" rows="3" class="mt-1 w-full px-4 py-2 bg-gray-50 dark:bg-gray-700 border rounded-lg" placeholder="Contoh: Menggunakan resep rahsia keluarga sejak 1980"></textarea></div>
                             </div>
                             <!-- Fields for Budaya -->
                             <div id="fields-budaya" class="dynamic-field-container hidden space-y-4">
@@ -232,8 +232,6 @@
 
             let persona = "", task = "", articleInstructions = "", socialMediaInstructions = "";
             
-            // === PERBAIKAN PROMPT ===
-            // Mengubah permintaan jumlah kata menjadi rentang yang lebih realistis untuk AI
             const articleLength = "antara 500 hingga 800 kata";
 
             switch (theme) {
@@ -292,6 +290,9 @@
             submitButton.disabled = true;
             resultsSection.classList.add('hidden');
             errorMessage.classList.add('hidden');
+            // Kosongkan hasil sebelumnya
+            articleOutput.value = '';
+            postOutput.value = '';
 
             const baseData = {
                 Judul: document.getElementById('reportTitle').value,
@@ -345,9 +346,7 @@
                 parts.push({ inlineData: { mimeType: uploadedFile.type, data: uploadedFile.base64 } });
             }
 
-            const payload = {
-                parts: parts
-            };
+            const payload = { parts: parts };
             
             try {
                 const response = await fetch(apiUrl, {
@@ -356,30 +355,41 @@
                     body: JSON.stringify(payload)
                 });
 
-                if (!response.ok) throw new Error(`Server error! status: ${response.status}`);
+                if (!response.ok) {
+                    const errText = await response.text();
+                    throw new Error(`Server error! status: ${response.status}. Pesan: ${errText}`);
+                }
 
-                const result = await response.json();
+                // === LOGIKA BARU: Membaca Stream ===
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder();
+                let buffer = '';
+                let isSeparated = false;
                 
-                if (result.candidates?.[0]?.content?.parts?.[0]?.text) {
-                    const fullText = result.candidates[0].content.parts[0].text;
-                    const contentParts = fullText.split('---PEMISAH---');
+                resultsSection.classList.remove('hidden');
+                sendToWaContainer.classList.remove('hidden');
+
+                while (true) {
+                    const { value, done } = await reader.read();
+                    if (done) break;
                     
-                    if (contentParts.length >= 2) {
-                        articleOutput.value = contentParts[0]?.trim() || "Gagal menghasilkan artikel.";
-                        postOutput.value = contentParts[1]?.trim() || "Gagal menghasilkan postingan media sosial.";
+                    buffer += decoder.decode(value, { stream: true });
+
+                    // Cek apakah pemisah sudah ada di buffer
+                    if (!isSeparated && buffer.includes('---PEMISAH---')) {
+                        const parts = buffer.split('---PEMISAH---');
+                        articleOutput.value = parts[0].trim();
+                        postOutput.value = parts[1].trim();
+                        isSeparated = true;
                     } else {
-                        // Jika pemisah tidak ditemukan, tampilkan semua di artikel untuk di-debug
-                        articleOutput.value = fullText;
-                        postOutput.value = "Gagal memisahkan konten. Periksa output artikel.";
+                        // Jika sudah terpisah, tambahkan sisa buffer ke postOutput
+                        if (isSeparated) {
+                            postOutput.value += buffer.substring(buffer.lastIndexOf('---PEMISAH---') + '---PEMISAH---'.length);
+                        } else {
+                            // Jika belum, tambahkan semua ke articleOutput
+                            articleOutput.value = buffer;
+                        }
                     }
-                    
-                    resultsSection.classList.remove('hidden');
-                    sendToWaContainer.classList.remove('hidden');
-                } else {
-                    let msg = "Respon dari AI tidak valid atau kosong.";
-                    if (result.promptFeedback?.blockReason) msg = `Konten diblokir: ${result.promptFeedback.blockReason}`;
-                    else if (result.error) msg = `Error dari backend: ${result.error}`;
-                    throw new Error(msg);
                 }
 
             } catch (error) {
